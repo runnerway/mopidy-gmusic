@@ -458,26 +458,27 @@ class GMusicLibraryProvider(backend.LibraryProvider):
     def _to_mopidy_album(self, song):
         # First try to process the album as an aa album
         # (Difference being that non aa albums don't have albumId)
-        try:
-            album = self._aa_to_mopidy_album(song)
-            return album
-        except KeyError:
-            name = song.get('album', '')
-            artist = self._to_mopidy_album_artist(song)
-            date = unicode(song.get('year', 0))
-            uri = 'gmusic:album:' + self._create_id(artist.name + name + date)
-            images = self._get_images(song)
-            album = Album(
-                uri=uri,
-                name=name,
-                artists=[artist],
-                num_tracks=song.get('totalTrackCount', 1),
-                num_discs=song.get(
-                    'totalDiscCount', song.get('discNumber', 1)),
-                date=date,
-                images=images)
-            self.albums[uri] = album
-            return album
+        #try:
+        #    album = self._aa_to_mopidy_album(song)
+        #    self.albums[album.uri] = album
+        #    return album
+        #except KeyError:
+        name = song['album']
+        artist = self._to_mopidy_album_artist(song)
+        date = unicode(song.get('year', 0))
+        uri = 'gmusic:album:' + self._create_id(artist.name + name)
+        images = self._get_images(song)
+        album = Album(
+            uri=uri,
+            name=name,
+            artists=[artist],
+            num_tracks=song.get('totalTrackCount', 1),
+            num_discs=song.get(
+                'totalDiscCount', song.get('discNumber', 1)),
+            date=date,
+            images=images)
+        self.albums[uri] = album
+        return album
 
     def _to_mopidy_artist(self, song):
         name = song.get('artist', '')
